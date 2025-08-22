@@ -10,9 +10,9 @@ permissions:
 
 env:
   AWS_REGION_PRIMARY: ap-southeast-1
-  ECR_REPO: the-weather-forecasting
+  ECR_REPO: the-weather-forecasting-2
   ECS_CLUSTER: weather-cluster
-  ECS_SERVICE: weather-service
+  ECS_SERVICE: weather-task-service-c8ln34p8
   CONTAINER_NAME: app
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
       - name: Configure AWS credentials (primary)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::443370703196:role/GitHubActionsDeployRole
+          role-to-assume: arn:aws:iam::443370703196:role/Github_Role
           aws-region: ${{ env.AWS_REGION_PRIMARY }}
 
       # Login to ECR
