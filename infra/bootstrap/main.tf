@@ -37,3 +37,12 @@ resource "aws_dynamodb_table" "locks" {
 
 output "state_bucket" { value = aws_s3_bucket.state.bucket }
 output "lock_table"   { value = aws_dynamodb_table.locks.name }
+
+
+
+
+resource "aws_ecr_repository" "weather_repo" {
+  name = "the-weather-forecasting"
+}
+
+
