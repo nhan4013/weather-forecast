@@ -1,0 +1,67 @@
+name: CI/CD - Build, Push, ECS Rolling Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write     # for OIDC
+  contents: read
+
+env:
+  AWS_REGION_PRIMARY: ap-southeast-1
+  ECR_REPO: the-weather-forecasting
+  ECS_CLUSTER: weather-cluster
+  ECS_SERVICE: weather-service
+  CONTAINER_NAME: app
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Authenticate to AWS via OIDC
+      - name: Configure AWS credentials (primary)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::443370703196:role/Github_Role
+          aws-region: ${{ env.AWS_REGION_PRIMARY }}
+
+      # Login to ECR
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Build & tag with both "sha" and "latest"
+      - name: Build image
+        run: |
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}
+          GIT_SHA=${GITHUB_SHA::7}
+          docker build -t $IMAGE_URI:$GIT_SHA -t $IMAGE_URI:latest .
+
+      - name: Push image
+        run: |
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}
+          GIT_SHA=${GITHUB_SHA::7}
+          docker push $IMAGE_URI:$GIT_SHA
+          docker push $IMAGE_URI:latest
+
+      # Render a new task definition with the immutable SHA tag
+      - name: Render task definition
+        id: taskdef
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ecs/taskdef.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ github.sha }}
+
+      # Register & deploy (ECS rolling update via service)
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.taskdef.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

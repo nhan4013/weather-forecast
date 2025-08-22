@@ -1,0 +1,30 @@
+{
+  "family": "weather-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::443370703196:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::443370703196:role/Github_Role",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "REPLACED_BY_ACTION",           
+      "portMappings": [{ "containerPort": 80, "protocol": "tcp" }],
+      "essential": true,
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "REACT_APP_OPENWEATHER_KEY", "value": "43ecce3632a7ce90e37c51b43fdffa23" }
+      ],
+      
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-region": "ap-southeast-1",
+          "awslogs-group": "/ecs/weather",
+          "awslogs-stream-prefix": "app"
+        }
+      }
+    }
+  ]
+}
