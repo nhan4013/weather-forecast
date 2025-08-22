@@ -2,7 +2,7 @@ name: CI/CD - Build, Push, ECS Rolling Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 permissions:
   id-token: write     # for OIDC
