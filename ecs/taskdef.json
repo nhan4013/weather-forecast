@@ -5,7 +5,6 @@
   "cpu": "256",
   "memory": "512",
   "executionRoleArn": "arn:aws:iam::443370703196:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::443370703196:role/Github_Role",
   "containerDefinitions": [
     {
       "name": "app",
