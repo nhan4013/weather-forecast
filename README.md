@@ -3,7 +3,7 @@
 <br/>
 <br/>
 
-With [The Weather Forecasting](https://the-weather-forecasting.netlify.app) user can search locations by city name and observe the weather for the next 5-6 days and 3 hour interval.
+With The Weather Forecasting user can search locations by city name and observe the weather for the next 5-6 days and 3 hour interval.
 <br />
 The app is developed using React.js and material-UI.
 
@@ -46,7 +46,6 @@ Check `packages.json` for details
 
 - [ ] Styled-components
 - [ ] Convert the entire project to TypeScript
-- [ ] Unit Testing
 - [ ] On launch, find user location weather by utilizing GeolocationAPI/GEOCODING
 - [ ] Celcius/Fahrenheit conversion
 - [ ] Dark/Light Mode
